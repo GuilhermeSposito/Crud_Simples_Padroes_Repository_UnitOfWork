@@ -1,4 +1,5 @@
 ﻿using ApiCatalogoTeste2.Context;
+using ApiCatalogoTeste2.Filters.Paginacao;
 using ApiCatalogoTeste2.Models;
 using ApiCatalogoTeste2.Repositorys.Categorias;
 using ApiCatalogoTeste2.Repositorys.Generics;
@@ -43,6 +44,16 @@ public class CategoriasController : Controller
 
 
         return Ok(categoria);
+    }
+
+    [HttpGet("pagination")]
+    public async Task<ActionResult> GetCatergoriaPagination([FromQuery] CategoriaParams categoriaParams)
+    {
+        var CategoriasPag = _ufw.CategoriasRepository.GetCategoriaPagination(categoriaParams);
+
+        
+
+        return Ok(CategoriasPag);
     }
 
     [HttpPost]

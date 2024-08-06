@@ -11,10 +11,11 @@
 using System;
 using System.Reflection;
 
+[assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("b216ee5d-e25b-42a3-8c12-fbc02783ef05")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("ApiCatalogoTeste2")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6e49787eb8f4b5588046639a74033f7c545b9f4b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e0a0cf2c8e671f6fd9d9cd82cbe85bf809d58fb8")]
 [assembly: System.Reflection.AssemblyProductAttribute("ApiCatalogoTeste2")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ApiCatalogoTeste2")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -1,8 +1,13 @@
 ﻿using ApiCatalogoTeste2.Context;
+using ApiCatalogoTeste2.Filters.Paginacao;
 using ApiCatalogoTeste2.Models;
+using ApiCatalogoTeste2.Models.Mappings;
 using ApiCatalogoTeste2.Repositorys.Generics;
 using ApiCatalogoTeste2.Repositorys.Produtos;
 using ApiCatalogoTeste2.Repositorys.UnitOfWork;
+using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,10 +18,12 @@ namespace ApiCatalogoTeste2.Controllers;
 public class ProdutosController : Controller
 {
     private readonly IUnitOfWork _ufw;
+    private readonly IMapper _mapper;
 
-    public ProdutosController(IUnitOfWork ufw)
+    public ProdutosController(IUnitOfWork ufw, IMapper mapper)
     {
         _ufw = ufw;
+        _mapper = mapper;
     }
 
     [HttpGet("/api/v1/[controller]/categoria/{id:int}")]
@@ -24,27 +31,32 @@ public class ProdutosController : Controller
     {
         IEnumerable<Produto> Produtos = _ufw.ProdutosRepository.GetProdutoPorCategoria(id);
 
-        return Ok(Produtos);    
+        return Ok(Produtos);
+    }
+
+
+    [HttpGet("Pagination")]
+    public async Task<ActionResult<List<Produto>>> GetProdutoPagination([FromQuery] ProdutosParameters produtoParams)
+    {
+        IEnumerable<Produto> Produtos = _ufw.ProdutosRepository.GetProdutosPaginado(produtoParams);
+
+        return Ok(Produtos);
+
     }
 
 
     [HttpGet]
+    [Authorize]
     public async Task<ActionResult<List<ProdutoDTO>>> GetProdutos()
     {
-        List<ProdutoDTO> produtos = _ufw.ProdutosRepository.GettAll()
-            .Select(p => new ProdutoDTO()
-            {
-                Id = p.Id,
-                Nome = p.Nome,
-                Descricao = p.Descricao,
-                Valor = p.Valor,
-                CategoriaId = p.CategoriaId,
-            }).ToList();
+        IEnumerable<Produto> produtos = _ufw.ProdutosRepository.GettAll();
+
+        List<ProdutoDTO> produtosDTO = _mapper.Map<List<ProdutoDTO>>(produtos);
 
         if (produtos is null)
             return NotFound("Nenhum produto Encontrado na base de dados");
 
-        return Ok(produtos);
+        return produtosDTO;
     }
 
     [HttpGet("{id:int}", Name = ("ObterProduto"))]
@@ -86,17 +98,44 @@ public class ProdutosController : Controller
         return new CreatedAtRouteResult("ObterProduto", new { id = NewProductInject.Id }, NewProductInject);
     }
 
+    [HttpPatch("{id}")]
+    public async Task<ActionResult<ProdutoDTOUpdateResponse>> UpdateProdutoNome(int id, JsonPatchDocument<ProdutoDTOUpdateRequest> patchProdutoDTO )
+    {
+        if (patchProdutoDTO is null || id <= 0)
+            return BadRequest();
+
+        var produto = _ufw.ProdutosRepository.Get(x => x.Id == id);
+
+        if (produto is null)
+            return NotFound("Produto solicitado, Não foi encontrado na base de dados");
+
+        var produtoUpdateRequest = _mapper.Map<ProdutoDTOUpdateRequest>(produto);
+
+        patchProdutoDTO.ApplyTo(produtoUpdateRequest, ModelState);
+
+        if(!ModelState.IsValid || !TryValidateModel(produtoUpdateRequest))
+           return BadRequest(ModelState);
+
+        _mapper.Map(produtoUpdateRequest, produto);
+
+        _ufw.ProdutosRepository.Update(produto);
+        _ufw.Commit();
+
+        return _mapper.Map<ProdutoDTOUpdateResponse>(produto);
+    }
+
+
     [HttpPut("{id:int}")]
-    public async Task<ActionResult> UpdateProduto(int id,Produto produto)
+    public async Task<ActionResult> UpdateProduto(int id, Produto produto)
     {
         if (id != produto.Id)
         {
             return BadRequest("Dados Invalidos");
         }
 
-       bool ProdutoFind = _ufw.ProdutosRepository.GettAll().Any(x=> x.Id == id);
+        bool ProdutoFind = _ufw.ProdutosRepository.GettAll().Any(x => x.Id == id);
         if (!ProdutoFind)
-           return BadRequest("Produto não encontrado no banco de dados");
+            return BadRequest("Produto não encontrado no banco de dados");
 
         if (produto.Nome is null || produto.Descricao is null)
             return BadRequest("Dados invalidos!");
@@ -113,8 +152,8 @@ public class ProdutosController : Controller
         _ufw.Commit();
 
 
-        if(CategoriaModificada is not null)
-        return Ok("Produto modificado com sucesso!");
+        if (CategoriaModificada is not null)
+            return Ok("Produto modificado com sucesso!");
 
         return BadRequest("Falha de atualização de produto");
     }
@@ -122,7 +161,7 @@ public class ProdutosController : Controller
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> DeleteProduto(int id)
     {
-        Produto? Produto = _ufw.ProdutosRepository.Get(x=> x.Id == id);
+        Produto? Produto = _ufw.ProdutosRepository.Get(x => x.Id == id);
 
         if (Produto is null)
             return NotFound("Produto não encontrado");
@@ -131,7 +170,7 @@ public class ProdutosController : Controller
 
         if (Deletado is not null)
             _ufw.Commit();
-            return Ok("Produto deletado com sucesso");
+        return Ok("Produto deletado com sucesso");
 
         return BadRequest("Erro ao deletar produto");
     }
