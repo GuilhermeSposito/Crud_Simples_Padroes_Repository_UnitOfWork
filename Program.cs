@@ -15,6 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using ApiCatalogoTeste2.Models;
 using ApiCatalogoTeste2.Services.TokenServices;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -63,6 +64,19 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+    options.AddPolicy("SuperAdminOnly", policy => policy.RequireRole("SuperAdmin"));
+    options.AddPolicy("UserOnly", policy => policy.RequireRole("User"));
+
+    options.AddPolicy("ExclusiveOnly", policy => policy.RequireAssertion(context =>
+        context.User.HasClaim(claim => claim.Type == "id" && claim.Value == "guilhermeSposito" ||
+                                                            context.User.IsInRole("SuperAdmin")
+        )
+
+    ));
+});
 
 builder.Services.AddAutoMapper(typeof(ProdutoDTOAutoMAppingProfile));
 builder.Services.AddScoped<ICategoriasRepository, CategoriasRepository>();
@@ -70,6 +84,7 @@ builder.Services.AddScoped<IProdutosRepository, ProdutosRepository>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+
 
 builder.Services.AddControllers(option =>
 {
@@ -111,16 +126,31 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+                        policy =>
+                        {
+                            policy.AllowAnyOrigin();
+                        }
+        );
+});
+
 var app = builder.Build();
 
+app.UseSwagger();
+app.UseSwaggerUI();
+
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+/*if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+}*/
 
 app.UseHttpsRedirection();
+
+app.UseCors();
 
 app.UseAuthorization();
 

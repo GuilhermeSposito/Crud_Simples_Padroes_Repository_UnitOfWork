@@ -18,13 +18,15 @@ public class AuthController : Controller
     private readonly UserManager<ApplicationUser> _userManeger;
     private readonly RoleManager<IdentityRole> _roleMAneger;
     private readonly IConfiguration _configuration;
+    private readonly ILogger<AuthController> _Logger;
 
-    public AuthController(ITokenService tokenService, UserManager<ApplicationUser> userManeger, RoleManager<IdentityRole> roleMAneger, IConfiguration configuration)
+    public AuthController(ITokenService tokenService, UserManager<ApplicationUser> userManeger, RoleManager<IdentityRole> roleMAneger, IConfiguration configuration, ILogger<AuthController> logger)
     {
         _tokenService = tokenService;
         _userManeger = userManeger;
         _roleMAneger = roleMAneger;
         _configuration = configuration;
+        _Logger = logger;
     }
 
     [HttpPost("Login")]
@@ -40,6 +42,7 @@ public class AuthController : Controller
             {
                 new Claim(ClaimTypes.Name, user.UserName!),
                 new Claim(ClaimTypes.Email, user.Email!),
+                new Claim("id", user.UserName!),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
@@ -141,8 +144,8 @@ public class AuthController : Controller
 
     }
 
-    [Authorize]
     [HttpPost("RevokeToken")]
+    [Authorize(Policy = "ExclusiveOnly")]
     public async Task<ActionResult> Revoke([FromQuery]string? username)
     {
         var user = await _userManeger.FindByNameAsync(username!);
@@ -154,6 +157,47 @@ public class AuthController : Controller
         await _userManeger.UpdateAsync(user);
 
         return NoContent();
+    }
+
+    [HttpPost("CreateRole")]
+    public async Task<ActionResult> CreateRole(string roleName)
+    {
+        var roleExist = await  _roleMAneger.RoleExistsAsync(roleName);
+
+        if (!roleExist)
+        {
+            var roleResult = await _roleMAneger.CreateAsync(new IdentityRole(roleName));
+
+            if (roleResult.Succeeded)
+            {
+                _Logger.LogInformation(1, "Role Adicionada");
+                return Ok(new Response() { Status = true , Message = "Role Adicionada"});
+            }
+            else
+            {
+                _Logger.LogInformation(2, "Erro ao adicionar role");
+                return BadRequest(new Response() { Status = false, Message = $"erro ao adicionar role {roleName}" });
+            }
+        }
+
+        return BadRequest(new Response() { Status = false, Message = "Role já existe" });
+    }
+
+    [HttpPost("AdicionaUsuarioARole")]
+    public async Task<ActionResult> AddUsuarioARole(string email, string roleName)
+    {
+        var user = await _userManeger.FindByEmailAsync(email);
+
+        if (user is null)
+            return BadRequest(new Response() { Status = false, Message = "Usuário não encontrado" });
+
+        var result = await _userManeger.AddToRoleAsync(user, roleName); 
+
+        if(!result.Succeeded)
+            return BadRequest(new Response() { Status = false, Message = "Role não adicionada" });
+
+        return Ok(new Response() { Status = true, Message = "Role Adicionada" });
+
     }
 }
 

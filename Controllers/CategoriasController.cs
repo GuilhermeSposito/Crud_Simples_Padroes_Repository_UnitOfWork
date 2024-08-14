@@ -4,6 +4,8 @@ using ApiCatalogoTeste2.Models;
 using ApiCatalogoTeste2.Repositorys.Categorias;
 using ApiCatalogoTeste2.Repositorys.Generics;
 using ApiCatalogoTeste2.Repositorys.UnitOfWork;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography.X509Certificates;
@@ -22,6 +24,7 @@ public class CategoriasController : Controller
     }
 
     [HttpGet]
+    [Authorize(Policy = "AdminOnly")]
     public async Task<ActionResult<CategoriaDTO>> GetCategorias()
     {
         IEnumerable<Categoria> Categorias = _ufw.CategoriasRepository.GettAll();

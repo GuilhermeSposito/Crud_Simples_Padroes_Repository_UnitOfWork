@@ -56,7 +56,7 @@ public class ProdutosController : Controller
         if (produtos is null)
             return NotFound("Nenhum produto Encontrado na base de dados");
 
-        return produtosDTO;
+        return Ok(produtosDTO);
     }
 
     [HttpGet("{id:int}", Name = ("ObterProduto"))]

@@ -123,3 +123,5 @@ C:\Prog\CursoWebAPI\ApiCatalogoTeste2\ApiCatalogoTeste2\ApiCatalogoTeste2\bin\De
 C:\Prog\CursoWebAPI\ApiCatalogoTeste2\ApiCatalogoTeste2\ApiCatalogoTeste2\bin\Debug\net8.0\Microsoft.Extensions.Identity.Core.dll
 C:\Prog\CursoWebAPI\ApiCatalogoTeste2\ApiCatalogoTeste2\ApiCatalogoTeste2\bin\Debug\net8.0\Microsoft.Extensions.Identity.Stores.dll
 C:\Prog\CursoWebAPI\ApiCatalogoTeste2\ApiCatalogoTeste2\ApiCatalogoTeste2\bin\Debug\net8.0\Microsoft.Extensions.Options.dll
+C:\Prog\CursoWebAPI\ApiCatalogoTeste2\ApiCatalogoTeste2\ApiCatalogoTeste2\bin\Debug\net8.0\web.config
+C:\Prog\CursoWebAPI\ApiCatalogoTeste2\ApiCatalogoTeste2\ApiCatalogoTeste2\bin\Debug\net8.0\appsettings.Production.json
