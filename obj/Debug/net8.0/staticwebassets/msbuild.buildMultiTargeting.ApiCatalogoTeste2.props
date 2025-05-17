@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\build\ApiCatalogoTeste2.props" />
-</Project>
