@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "CjFMU/SIOboM3EL8OAeNQ8rcbYpbGEcJYJpaxtkb2QHE0YD/qvnmyvttluoJ7GMdlRjaNwpB433ixC+J+jM3VA==",
+  "dgSpecHash": "N1f+UBwxjKo=",
   "success": true,
-  "projectFilePath": "C:\\Prog\\CursoWebAPI\\ApiCatalogoTeste2\\ApiCatalogoTeste2\\ApiCatalogoTeste2\\ApiCatalogoTeste2.csproj",
+  "projectFilePath": "C:\\Prog\\CursoWebAPI\\Teste-para-deploy\\Crud_Simples_Padroes_Repository_UnitOfWork\\ApiCatalogoTeste2.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\gui-c\\.nuget\\packages\\automapper\\13.0.1\\automapper.13.0.1.nupkg.sha512",
     "C:\\Users\\gui-c\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
@@ -71,5 +71,26 @@
     "C:\\Users\\gui-c\\.nuget\\packages\\system.text.json\\8.0.4\\system.text.json.8.0.4.nupkg.sha512",
     "C:\\Users\\gui-c\\.nuget\\packages\\system.threading.channels\\6.0.0\\system.threading.channels.6.0.0.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "NU1903",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'Microsoft.Extensions.Caching.Memory' 8.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-qj66-m88j-hmgj",
+      "libraryId": "Microsoft.Extensions.Caching.Memory",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    },
+    {
+      "code": "NU1903",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'System.Text.Json' 8.0.4 has a known high severity vulnerability, https://github.com/advisories/GHSA-8g4q-xg66-9fp4",
+      "libraryId": "System.Text.Json",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    }
+  ]
 }

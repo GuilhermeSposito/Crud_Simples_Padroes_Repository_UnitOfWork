@@ -46,7 +46,6 @@ public class ProdutosController : Controller
 
 
     [HttpGet]
-    [Authorize]
     public async Task<ActionResult<List<ProdutoDTO>>> GetProdutos()
     {
         IEnumerable<Produto> produtos = _ufw.ProdutosRepository.GettAll();

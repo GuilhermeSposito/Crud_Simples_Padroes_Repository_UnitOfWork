@@ -1,11 +1,12 @@
 {
   "Version": 1,
-  "Hash": "ACZIJyAwBSrMzX4tYfgbpv3pljK73dwvZI6GJK6hWrs=",
+  "Hash": "oqf8tfJ8a9uZ9nVwQiA38V/72X/c8vVBMUdlpi5KPkI=",
   "Source": "ApiCatalogoTeste2",
   "BasePath": "_content/ApiCatalogoTeste2",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
   "DiscoveryPatterns": [],
-  "Assets": []
+  "Assets": [],
+  "Endpoints": []
 }

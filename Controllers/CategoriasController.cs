@@ -24,7 +24,6 @@ public class CategoriasController : Controller
     }
 
     [HttpGet]
-    [Authorize(Policy = "AdminOnly")]
     public async Task<ActionResult<CategoriaDTO>> GetCategorias()
     {
         IEnumerable<Categoria> Categorias = _ufw.CategoriasRepository.GettAll();
